@@ -1,1 +1,1 @@
-__version__ = "dev"
+from .mysql_database import MysqlDatabase as Database
