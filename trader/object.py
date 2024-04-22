@@ -6,7 +6,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from logging import INFO
 
-from .constant import Direction, Exchange, Interval, Offset, Status, Product, OptionType, OrderType
+from .constant import Direction, Exchange, Interval, Offset, Status, Product, OptionType, OrderType, StopOrderStatus
 
 ACTIVE_STATUSES = set([Status.SUBMITTING, Status.NOTTRADED, Status.PARTTRADED])
 
@@ -421,3 +421,19 @@ class QuoteRequest:
             gateway_name=gateway_name,
         )
         return quote
+
+
+@dataclass
+class StopOrder:
+    vt_symbol: str
+    direction: Direction
+    offset: Offset
+    price: float
+    volume: float
+    stop_orderid: str
+    strategy_name: str
+    datetime: datetime
+    lock: bool = False
+    net: bool = False
+    vt_orderids: list = field(default_factory=list)
+    status: StopOrderStatus = StopOrderStatus.WAITING
