@@ -8,16 +8,16 @@ import numpy as np
 import pyqtgraph as pg
 from pandas import DataFrame
 
-from vnpy.trader.constant import Interval, Direction, Exchange
-from vnpy.trader.engine import MainEngine, BaseEngine
-from vnpy.trader.ui import QtCore, QtWidgets, QtGui
-from vnpy.trader.ui.widget import BaseMonitor, BaseCell, DirectionCell, EnumCell
-from vnpy.event import Event, EventEngine
-from vnpy.chart import ChartWidget, CandleItem, VolumeItem
-from vnpy.trader.utility import load_json, save_json
-from vnpy.trader.object import BarData, TradeData, OrderData
-from vnpy.trader.database import DB_TZ
-from vnpy_ctastrategy.backtesting import DailyResult
+from trader.constant import Interval, Direction, Exchange
+from trader.engine import MainEngine, BaseEngine
+from trader.ui import QtCore, QtWidgets, QtGui
+from trader.ui.widget import BaseMonitor, BaseCell, DirectionCell, EnumCell
+from event.engine import Event, EventEngine
+from chart import ChartWidget, CandleItem, VolumeItem
+from trader.utility import load_json, save_json
+from trader.object import BarData, TradeData, OrderData
+from data.database.database import DB_TZ
+from apps.single_asset_backtester.engine import DailyResult
 
 from ..engine import (
     APP_NAME,
@@ -330,7 +330,7 @@ class BacktesterManager(QtWidgets.QWidget):
 
         _, exchange_str = vt_symbol.split(".")
         if exchange_str not in Exchange.__members__:
-            self.write_log("本地代码的交易所后缀不正确，请检查")
+            self.write_log(f"本地代码的交易所后缀{exchange_str}不正确，请检查")
             return
 
         # Save backtesting parameters
