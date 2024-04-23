@@ -9,7 +9,7 @@ from importlib import import_module
 from typing import Callable, Dict, List, Tuple
 
 import vnpy
-from vnpy.event import EventEngine
+from event.engine import EventEngine
 
 from .qt import QtCore, QtGui, QtWidgets
 from .widget import (

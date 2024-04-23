@@ -13,10 +13,10 @@ from queue import Empty, Queue
 from threading import Thread
 from typing import Any, Type, Dict, List, Optional
 
-from vnpy.event import Event, EventEngine
+from event.engine import Event, EventEngine
 from apps.baseapp import BaseApp
 from event.event import EventType
-from .gateway import BaseGateway
+from gateway.gateway import BaseGateway
 from .object import (
     CancelRequest,
     LogData,

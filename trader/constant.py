@@ -94,6 +94,7 @@ class Exchange(Enum):
     CFETS = "CFETS"         # CFETS Bond Market Maker Trading System
     XBOND = "XBOND"         # CFETS X-Bond Anonymous Trading System
 
+
     # Global
     SMART = "SMART"         # Smart Router for US stocks
     NYSE = "NYSE"           # New York Stock Exchnage
