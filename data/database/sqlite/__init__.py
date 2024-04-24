@@ -1,1 +1,1 @@
-__version__ = "dev"
+from .sqlite_database import SqliteDatabase as Database
