@@ -10,11 +10,13 @@ from trader.utility import BarGenerator, ArrayManager
 
 
 class Reversal(CtaTemplate):
-    author = "tt"
+    author = "Xu Yangtao"
 
     boll_window = 360
     boll_dev = 2
-    weights = np.arange(1, 2881)
+    positive_limit = 0.00029
+    negative_limit = -0.00018
+    weights = np.arange(1, 361)
     weights = weights / sum(weights)
 
     buy_price = 0
@@ -27,7 +29,7 @@ class Reversal(CtaTemplate):
     timer = 0
     sign_trade = 0
 
-    parameters = ["boll_window", "boll_dev"]
+    parameters = ["boll_window", "boll_dev","positive_limit","negative_limit"]
     variables = ["boll_up", "boll_down", "reversal"]
 
     def __init__(self, cta_engine, strategy_name, vt_symbol, setting):
@@ -81,52 +83,34 @@ class Reversal(CtaTemplate):
         self.boll_up, self.boll_down = am.boll(self.boll_window, self.boll_dev)
         self.PB = (am.close[-1] - self.boll_down) / (self.boll_up - self.boll_down)
 
-        self.last_15_returns = am.close[-2880:] / am.open[-2880:] - 1  # get the last 15 close prices
+        self.last_15_returns = am.close[-360:] / am.open[-360:] - 1  # get the last 15 close prices
         self.reversal = np.dot(self.last_15_returns, self.weights)
 
-        # if self.timer < 240:
-        #     price = Decimal(am.close[-1])
-        #     if self.sign_trade == 'LONG':
 
-        #         if (((price - self.buy_price)/self.buy_price < -0.02) or ((price - self.buy_price)/self.buy_price > 0.03)):
-        #             self.sell(price,abs(self.pos))
-        #             self.sign_trade = 0
-        #         else: return
-
-        #     elif self.sign_trade == 'SHORT':
-
-        #         if (((price - self.short_price)/self.short_price > 0.02) or  ((price - self.short_price)/self.short_price < -0.03)):
-        #             self.cover(price,abs(self.pos))
-        #             self.sign_trade = 0
-        #         else: return
-
-        #     else:
-        #         return
 
         if self.timer >= 240:
-            if self.sign_trade == 'SHORT':
+            if self.pos < 0:
                 price = Decimal(am.close[-1])
                 self.cover(price, abs(self.pos))
                 self.sign_trade = 0
 
-            if self.sign_trade == 'LONG':
+            if self.pos > 0:
                 price = Decimal(am.close[-1])
                 self.sell(price, abs(self.pos))
                 self.sign_trade = 0
 
-        if self.sign_trade == 0:
 
-            if (am.close[-1] > self.boll_up or am.close[-1] < self.boll_down) and self.reversal > 0.0001:  #
-                self.short_price = Decimal(am.close[-1])
-                self.short(self.short_price, 1)
-                self.sign_trade = "SHORT"
-                self.timer = 0
+        if (am.close[-1] > self.boll_up or am.close[-1] < self.boll_down) and self.reversal > self.positive_limit:  #
+            self.short_price = Decimal(am.close[-1])
+            self.short(self.short_price, 1)
+            self.sign_trade = "SHORT"
+            self.timer = 0
 
-            if (am.close[-1] > self.boll_up or am.close[-1] < self.boll_down) and self.reversal < -0.0001:  #
-                self.buy_price = Decimal(am.close[-1])
-                self.buy(self.buy_price, 1)
-                self.sign_trade = "LONG"
-                self.timer = 0
+        if (am.close[-1] > self.boll_up or am.close[-1] < self.boll_down) and self.reversal < self.negative_limit:  #
+            self.buy_price = Decimal(am.close[-1])
+            self.buy(self.buy_price, 1)
+            self.sign_trade = "LONG"
+            self.timer = 0
 
         self.put_event()
 
@@ -148,6 +132,9 @@ class Reversal(CtaTemplate):
         Callback of stop order update.
         """
         pass
+
+
+
 
 
 
